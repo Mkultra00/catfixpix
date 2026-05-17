@@ -20,7 +20,6 @@ export function CatCard({ imageUrl, caption, loading }: Props) {
           src={imageUrl}
           alt="A funny cat"
           className="absolute inset-0 h-full w-full object-cover"
-          crossOrigin="anonymous"
         />
       ) : (
         <div className="absolute inset-0 animate-pulse bg-muted" />
