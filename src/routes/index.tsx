@@ -127,7 +127,7 @@ function Index() {
       <header className="relative z-10 flex items-center justify-between px-5 py-5 sm:px-8">
         <div className="flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-primary" />
-          <h1 className="text-2xl font-black tracking-tight">LOLCatz.ai</h1>
+          <h1 className="text-2xl font-black tracking-tight">CatFixPix</h1>
         </div>
         <Sheet>
           <SheetTrigger asChild>
