@@ -43,7 +43,7 @@ export const Route = createFileRoute("/api/generate-caption")({
               {
                 role: "user",
                 content: [
-                  { type: "text", text: "Write a LOLCatz caption for this cat:" },
+                  { type: "text", text: "Write a cute, funny caption for this cat:" },
                   { type: "image_url", image_url: { url: imageUrl } },
                 ],
               },
