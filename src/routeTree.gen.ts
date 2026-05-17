@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiGenerateCaptionRouteImport } from './routes/api/generate-caption'
+import { Route as ApiCatImageRouteImport } from './routes/api/cat-image'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const ApiGenerateCaptionRoute = ApiGenerateCaptionRouteImport.update({
   path: '/api/generate-caption',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCatImageRoute = ApiCatImageRouteImport.update({
+  id: '/api/cat-image',
+  path: '/api/cat-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/cat-image': typeof ApiCatImageRoute
   '/api/generate-caption': typeof ApiGenerateCaptionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/cat-image': typeof ApiCatImageRoute
   '/api/generate-caption': typeof ApiGenerateCaptionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/cat-image': typeof ApiCatImageRoute
   '/api/generate-caption': typeof ApiGenerateCaptionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/generate-caption'
+  fullPaths: '/' | '/api/cat-image' | '/api/generate-caption'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/generate-caption'
-  id: '__root__' | '/' | '/api/generate-caption'
+  to: '/' | '/api/cat-image' | '/api/generate-caption'
+  id: '__root__' | '/' | '/api/cat-image' | '/api/generate-caption'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiCatImageRoute: typeof ApiCatImageRoute
   ApiGenerateCaptionRoute: typeof ApiGenerateCaptionRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGenerateCaptionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cat-image': {
+      id: '/api/cat-image'
+      path: '/api/cat-image'
+      fullPath: '/api/cat-image'
+      preLoaderRoute: typeof ApiCatImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiCatImageRoute: ApiCatImageRoute,
   ApiGenerateCaptionRoute: ApiGenerateCaptionRoute,
 }
 export const routeTree = rootRouteImport
