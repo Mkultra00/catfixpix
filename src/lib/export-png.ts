@@ -10,7 +10,8 @@ export async function renderMemePng(imageUrl: string, caption: string): Promise<
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas not supported");
 
-  const img = await loadImage(imageUrl);
+  const proxied = `/api/cat-image?url=${encodeURIComponent(imageUrl)}`;
+  const img = await loadImage(proxied);
 
   // cover-fit
   const scale = Math.max(size / img.width, size / img.height);
