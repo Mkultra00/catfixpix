@@ -72,9 +72,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "LOLCatz.ai — AI-powered talking cat memes" },
-      { name: "description", content: "Endless AI-generated LOLCatz memes. Tap refresh for moar catz. No signup, just lolz." },
-      { property: "og:title", content: "LOLCatz.ai" },
+      { title: "CatFixPix — AI-powered cat memes" },
+      { name: "description", content: "Endless AI-generated cat memes. Tap refresh for moar catz. No signup, just lolz." },
+      { property: "og:title", content: "CatFixPix" },
       { property: "og:description", content: "Endless AI-generated cat memes. Tap for moar." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
