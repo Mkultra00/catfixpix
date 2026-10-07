@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Download, Heart, RefreshCw, Share2, Sparkles, Trash2 } from "lucide-react";
 import { CatCard } from "@/components/CatCard";
 import { Button } from "@/components/ui/button";
@@ -30,8 +30,9 @@ async function fetchCatImage(): Promise<string> {
   return data[0].url;
 }
 
-async function fetchCaption(imageUrl: string): Promise<string> {
+async function fetchCaption(imageUrl: string, signal: AbortSignal): Promise<string> {
   const res = await fetch("/api/generate-caption", {
+    signal,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ imageUrl }),
@@ -53,19 +54,26 @@ function Index() {
     setFavs(getFavorites());
   }, []);
 
+  const ctrlRef = useRef<AbortController | null>(null);
   const refresh = useCallback(async () => {
+    ctrlRef.current?.abort();
+    const ctrl = new AbortController();
+    ctrlRef.current = ctrl;
+    const timer = setTimeout(() => ctrl.abort(), 20000);
     setLoading(true);
     try {
       const imageUrl = await fetchCatImage();
-      // show image immediately; caption resolves shortly after
+      if (ctrl.signal.aborted && ctrlRef.current !== ctrl) return;
       setPair({ imageUrl, caption: "" });
-      const caption = await fetchCaption(imageUrl);
+      const caption = await fetchCaption(imageUrl, ctrl.signal);
       setPair({ imageUrl, caption });
     } catch (e) {
+      if (ctrlRef.current !== ctrl) return; // superseded by a newer refresh
       console.error(e);
-      toast.error(e instanceof Error ? e.message : "Could not fetch a cat");
+      toast.error(ctrl.signal.aborted ? "That cat took too long — try again" : e instanceof Error ? e.message : "Could not fetch a cat");
     } finally {
-      setLoading(false);
+      clearTimeout(timer);
+      if (ctrlRef.current === ctrl) setLoading(false);
     }
   }, []);
 
@@ -232,7 +240,6 @@ function ActionBar({
         </IconBtn>
         <Button
           onClick={onRefresh}
-          disabled={disabled}
           size="lg"
           className="h-14 flex-1 gap-2 rounded-full bg-primary text-base font-black uppercase tracking-wide text-primary-foreground shadow-lg hover:bg-primary/90 sm:flex-initial sm:px-10"
         >

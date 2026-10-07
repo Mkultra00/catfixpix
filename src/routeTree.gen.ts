@@ -10,22 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiGenerateCaptionRouteImport } from './routes/api/generate-caption'
 import { Route as ApiCatImageRouteImport } from './routes/api/cat-image'
+import { Route as ApiGenerateCaptionRouteImport } from './routes/api/generate-caption'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiGenerateCaptionRoute = ApiGenerateCaptionRouteImport.update({
-  id: '/api/generate-caption',
-  path: '/api/generate-caption',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiCatImageRoute = ApiCatImageRouteImport.update({
   id: '/api/cat-image',
   path: '/api/cat-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGenerateCaptionRoute = ApiGenerateCaptionRouteImport.update({
+  id: '/api/generate-caption',
+  path: '/api/generate-caption',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -68,18 +68,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/generate-caption': {
-      id: '/api/generate-caption'
-      path: '/api/generate-caption'
-      fullPath: '/api/generate-caption'
-      preLoaderRoute: typeof ApiGenerateCaptionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/cat-image': {
       id: '/api/cat-image'
       path: '/api/cat-image'
       fullPath: '/api/cat-image'
       preLoaderRoute: typeof ApiCatImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/generate-caption': {
+      id: '/api/generate-caption'
+      path: '/api/generate-caption'
+      fullPath: '/api/generate-caption'
+      preLoaderRoute: typeof ApiGenerateCaptionRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -93,3 +93,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
