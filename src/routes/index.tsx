@@ -232,7 +232,7 @@ function ActionBar({
         </IconBtn>
         <Button
           onClick={onRefresh}
-          disabled={disabled}
+          disabled={spinning}
           size="lg"
           className="h-14 flex-1 gap-2 rounded-full bg-primary text-base font-black uppercase tracking-wide text-primary-foreground shadow-lg hover:bg-primary/90 sm:flex-initial sm:px-10"
         >
