@@ -30,6 +30,23 @@ export const Route = createFileRoute("/api/generate-caption")({
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
 
+        // Send the image inline: the AI gateway can stall fetching some Cat CDN URLs.
+        let imageData: string;
+        try {
+          const imgRes = await fetch(imageUrl, { signal: AbortSignal.timeout(10000) });
+          if (!imgRes.ok) throw new Error(String(imgRes.status));
+          const buf = new Uint8Array(await imgRes.arrayBuffer());
+          let bin = "";
+          for (let i = 0; i < buf.length; i += 0x8000) {
+            bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+          }
+          const type = imgRes.headers.get("content-type") ?? "image/jpeg";
+          imageData = `data:${type};base64,${btoa(bin)}`;
+        } catch (e) {
+          console.error("Image fetch failed", e);
+          return Response.json({ error: "Couldn't load that cat." }, { status: 502 });
+        }
+
         const upstream = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
@@ -44,13 +61,16 @@ export const Route = createFileRoute("/api/generate-caption")({
                 role: "user",
                 content: [
                   { type: "text", text: "Write a cute, funny caption for this cat:" },
-                  { type: "image_url", image_url: { url: imageUrl } },
+                  { type: "image_url", image_url: { url: imageData } },
                 ],
               },
             ],
           }),
-        });
+          signal: AbortSignal.timeout(18000),
+        }).catch(() => null);
 
+        if (!upstream)
+          return Response.json({ error: "The cat is thinking too hard. Try again." }, { status: 504 });
         if (upstream.status === 429)
           return Response.json({ error: "Rate limit, try again soon." }, { status: 429 });
         if (upstream.status === 402)
